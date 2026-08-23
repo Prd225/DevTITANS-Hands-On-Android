@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,13 +41,33 @@ import com.example.plaintext.ui.viewmodel.ListViewState
 import androidx.compose.foundation.overscroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.room.Delete
 import com.example.plaintext.data.model.PasswordInfo
 
 @Composable
 fun ListView(
-) {}
+    navigateToEditList: (password: PasswordInfo) -> Unit,
+    viewModel: ListViewModel = hiltViewModel()
+) {
+    Scaffold(
+        topBar = { TopBarComponent() },
+        floatingActionButton = {
+            AddButton(onClick = {
+                navigateToEditList(PasswordInfo(0, "", "", "", ""))
+            })
+        }
+    ) { padding ->
+        ListItemContent(
+            modifier = Modifier.padding(padding),
+            listState = viewModel.listViewState,
+            navigateToEdit = navigateToEditList,
+            onDelete = { password -> viewModel.deletePassword(password) }
+        )
+    }
+}
 
 @Composable
 fun AddButton(onClick: () -> Unit) {
@@ -64,7 +85,8 @@ fun AddButton(onClick: () -> Unit) {
 fun ListItemContent(
     modifier: Modifier,
     listState: ListViewState,
-    navigateToEdit: (password: PasswordInfo) -> Unit
+    navigateToEdit: (password: PasswordInfo) -> Unit,
+    onDelete: (password: PasswordInfo) -> Unit
 ) {
         when {
             !listState.isCollected -> {
@@ -79,7 +101,8 @@ fun ListItemContent(
                     items(listState.passwordList.size) {
                         ListItem(
                             listState.passwordList[it],
-                            navigateToEdit
+                            navigateToEdit,
+                            onDelete
                         )
                     }
                 }
@@ -101,7 +124,8 @@ fun LoadingScreen() {
 @Composable
 fun ListItem(
     password: PasswordInfo,
-    navigateToEdit: (password: PasswordInfo) -> Unit
+    navigateToEdit: (password: PasswordInfo) -> Unit,
+    onDelete: (password: PasswordInfo) -> Unit
 ) {
     val title = password.name
     val subTitle = password.login
@@ -127,9 +151,16 @@ fun ListItem(
             Text(title, fontSize = 20.sp)
             Text(subTitle, fontSize = 14.sp)
         }
+        IconButton(onClick = { onDelete(password)}) {
+            Icon(
+                Icons.Filled.Delete,
+                contentDescription = "Excluir",
+                tint = Color.DarkGray
+            )
+        }
         Icon(
             Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Menu",
-            tint = Color.White
+            tint = Color.Black
         )
     }
 }
