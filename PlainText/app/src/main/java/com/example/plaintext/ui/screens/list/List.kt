@@ -1,8 +1,10 @@
 package com.example.plaintext.ui.screens.list
 
+import android.R.attr.onClick
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +44,7 @@ import androidx.compose.foundation.overscroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.room.Delete
@@ -165,3 +168,33 @@ fun ListItem(
     }
 }
 
+@Preview(showBackground = true, backgroundColor = 0xFFA52A2A, showSystemUi = true)
+@Composable
+fun ListViewPreview() {
+    val senhasFalsas = listOf(
+        PasswordInfo(
+            id = 1,
+            name = "Gmail",
+            login = "pedro@gmail.com",
+            password = "senha_super_secreta_1",
+            notes = "Email principal"
+        ),
+        PasswordInfo(
+            id = 2,
+            name = "Github",
+            login = "pedro.dev",
+            password = "senha_super_secreta_2",
+            notes = "Repositórios da faculdade"
+        )
+    )
+
+    val estadoFalso = ListViewState(
+        isCollected = true,
+        passwordList = senhasFalsas
+    )
+    ListView(
+        listState = estadoFalso,
+        onAddClick = { },
+        navigateToEdit = { }
+    )
+}
