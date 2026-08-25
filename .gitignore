@@ -1,2 +1,11 @@
 android-studio/
 android-studio-2024.*
+build/
+.gradle/
+.kotlin/
+.idea/
+local.properties
+Jetcastersample/
+install_android_studio.sh
+run_android_studio.sh
+
