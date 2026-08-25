@@ -8,4 +8,5 @@ local.properties
 Jetcastersample/
 install_android_studio.sh
 run_android_studio.sh
-
+PlainText/gradle.properties
+PlainText/local.properties
