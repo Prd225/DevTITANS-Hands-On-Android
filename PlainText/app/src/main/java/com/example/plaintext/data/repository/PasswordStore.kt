@@ -12,32 +12,54 @@ interface PasswordDBStore {
     fun get(id: Int): Password?
     suspend fun save(passwordInfo: PasswordInfo)
     suspend fun isEmpty(): Flow<Boolean>
+    suspend fun delete(password: Password)
+
+    suspend fun isLoginDuplicate(login: String, excludeID: Int): Boolean
 }
 
 class LocalPasswordDBStore(
     private val passwordDao : PasswordDao
 ): PasswordDBStore {
     override fun getList(): Flow<List<Password>> {
-        TODO("Not yet implemented")
+        return passwordDao.getAll()
     }
 
     override suspend fun add(password: Password): Long {
-        TODO("Not yet implemented")
+        return passwordDao.insert(password)
     }
 
     override suspend fun update(password: Password) {
-        TODO("Not yet implemented")
+        passwordDao.update(password)
     }
 
     override fun get(id: Int): Password? {
-        TODO("Not yet implemented")
+        return passwordDao.getById(id)
+    }
+
+    override suspend fun delete(password: Password) {
+        passwordDao.delete(password)
     }
 
     override suspend fun save(passwordInfo: PasswordInfo) {
-        TODO("Not yet implemented")
+        val password = Password(
+            id = passwordInfo.id,
+            name = passwordInfo.name,
+            login = passwordInfo.login,
+            password = passwordInfo.password,
+            notes = passwordInfo.notes
+        )
+        if (password.id == 0){
+            add(password)
+        } else {
+            update(password)
+        }
     }
 
     override suspend fun isEmpty(): Flow<Boolean> {
-        TODO("Not yet implemented")
+        return passwordDao.isEmpty()
+    }
+
+    override suspend fun isLoginDuplicate(login: String, excludeId: Int): Boolean {
+        return passwordDao.countByLogin(login, excludeId) > 0
     }
 }

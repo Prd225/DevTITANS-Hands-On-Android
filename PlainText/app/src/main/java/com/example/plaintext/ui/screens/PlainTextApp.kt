@@ -30,6 +30,10 @@ fun PlainTextApp(
     NavHost(
         navController = appState.navController,
         startDestination = Screen.Hello("DevTITANS"),
+
+        //startDestination = Screen.List, <- ativar essa linha temporária enquanto as telas não estão
+        // implementadas, apenas para visualizar a tela de cadastro no banco, desativar a linha
+        // anterior quando ativar esta.
     )
     {
         composable<Screen.Hello>{
@@ -39,17 +43,24 @@ fun PlainTextApp(
         composable<Screen.Login>{
             Login_screen(
                 navigateToSettings = {},
-                navigateToList = {}
+                navigateToList = { appState.navigateToList()}
             )
         }
+        composable <Screen.List> {
+            ListView(
+                navigateToEditList = { password -> appState.navigateToEditList(password) }
+            )
+        }
+
         composable<Screen.EditList>(
             typeMap = mapOf(typeOf<PasswordInfo>() to parcelableType<PasswordInfo>())
         ) {
             val args = it.toRoute<Screen.EditList>()
+            val viewModel: ListViewModel = hiltViewModel()
             EditList(
                 args,
-                navigateBack = {},
-                savePassword = { password -> Unit }
+                navigateBack = { appState.navController.popBackStack() },
+                savePassword = { password, onResult -> viewModel.savePassword(password, onResult) }
             )
         }
     }

@@ -28,18 +28,57 @@ data class ListViewState(
 
 //Utilize o passwordBDStore para obter a lista de senhas e salva-las
 @HiltViewModel
-open class ListViewModel @Inject constructor () : ViewModel() {
+open class ListViewModel @Inject constructor (
+    private val passwordDBStore: PasswordDBStore
+) : ViewModel() {
+
     var listViewState by mutableStateOf(ListViewState(passwordList = emptyList()))
         private set
 
     init{
         viewModelScope.launch {
                 //execute o metodo getList() do passwordDBStore e colete o resultado
+                passwordDBStore.getList().collect { passwords ->
+                    listViewState = listViewState.copy(
+                        passwordList = passwords.map {
+                            PasswordInfo(
+                                id = it.id,
+                                name = it.name,
+                                login = it.login,
+                                password = it.password,
+                                notes = it.notes ?: ""
+                            )
+                        },
+                        isCollected = true
+                    )
+                }
             }
         }
 
 
-    fun savePassword(password: PasswordInfo){
+    fun savePassword(password: PasswordInfo, onResult: (sucess: Boolean) -> Unit){
+        viewModelScope.launch {
+            val duplicado = passwordDBStore.isLoginDuplicate(password.login, password.id)
+            if (duplicado){
+                onResult(false)
+            } else {
+                passwordDBStore.save(password)
+                onResult(true)
+            }
+        }
+    }
 
+    fun deletePassword(password: PasswordInfo){
+        viewModelScope.launch {
+            passwordDBStore.delete(
+                Password(
+                    id = password.id,
+                    name = password.name,
+                    login = password.login,
+                    password = password.password,
+                    notes = password.notes
+                )
+            )
+        }
     }
 }
