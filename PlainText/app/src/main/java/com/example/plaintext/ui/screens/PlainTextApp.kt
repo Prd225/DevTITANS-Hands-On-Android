@@ -33,7 +33,7 @@ fun PlainTextApp(
 
         //startDestination = Screen.Preferences
 
-        //startDestination = Screen.List, <- ativar essa linha temporária enquanto as telas não estão
+        //startDestination = Screen.List// <- ativar essa linha temporária enquanto as telas não estão
         // implementadas, apenas para visualizar a tela de cadastro no banco, desativar a linha
         // anterior quando ativar esta.
     )

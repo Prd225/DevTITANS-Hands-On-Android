@@ -32,15 +32,6 @@ import com.example.plaintext.ui.viewmodel.PreferencesState
 import com.example.plaintext.ui.viewmodel.PreferencesViewModel
 import kotlinx.coroutines.delay
 
-//
-/*
-data class Preferences(
-    val login: MutableState<String>,
-    val password: MutableState<String>,
-    val preencher: MutableState<Boolean>
-)
- */
-
 @Composable
 fun SettingsScreen(navController: NavHostController?,
                    viewModel: PreferencesViewModel = hiltViewModel()
@@ -71,22 +62,7 @@ fun SettingsContent(modifier: Modifier = Modifier, viewModel: PreferencesViewMod
             summary = "Preencher login na tela inicial",
             onFinish = {novoLogin -> viewModel.updateLogin(novoLogin)}
         )
-        /*
-        Column(
-            modifier = Modifier
 
-        ) {
-            Text(
-                text = viewModel.preferencesState.login,
-                fontSize = 20.sp,
-                color = Color.Black,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFFAED581))
-                    .padding(16.dp)
-            )
-        }
-        */
         PreferenceInput(
             title = "Setar Senha",
             label = "Label",
