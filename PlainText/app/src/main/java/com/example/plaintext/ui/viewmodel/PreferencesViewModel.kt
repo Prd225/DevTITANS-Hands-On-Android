@@ -7,9 +7,16 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.plaintext.data.model.Password
+import com.example.plaintext.data.model.PasswordInfo
+import com.example.plaintext.data.repository.PasswordDBStore
+import com.example.plaintext.ui.screens.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class PreferencesState(
@@ -20,21 +27,27 @@ data class PreferencesState(
 
 @HiltViewModel
 class PreferencesViewModel @Inject constructor(
-    handle: SavedStateHandle,
+    handle: SavedStateHandle
 ) : ViewModel() {
     var preferencesState by mutableStateOf(PreferencesState(login = "devtitans", password = "123", preencher = true))
         private set
 
     fun updateLogin(login: String) {
-
+        preferencesState = preferencesState.copy(
+            login = login
+        )
     }
 
     fun updatePassword(password: String) {
-
+        preferencesState = preferencesState.copy(
+            password = password
+        )
     }
 
     fun updatePreencher(preencher: Boolean) {
-
+        preferencesState = preferencesState.copy(
+            preencher = !preencher
+        )
     }
 
     fun checkCredentials(login: String, password: String): Boolean{

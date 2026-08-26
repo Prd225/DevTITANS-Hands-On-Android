@@ -31,6 +31,8 @@ fun PlainTextApp(
         navController = appState.navController,
         startDestination = Screen.Hello("DevTITANS"),
 
+        //startDestination = Screen.Preferences
+
         //startDestination = Screen.List, <- ativar essa linha temporária enquanto as telas não estão
         // implementadas, apenas para visualizar a tela de cadastro no banco, desativar a linha
         // anterior quando ativar esta.
@@ -39,6 +41,9 @@ fun PlainTextApp(
         composable<Screen.Hello>{
             var args = it.toRoute<Screen.Hello>()
             Hello_screen(args)
+        }
+        composable<Screen.Preferences>{
+            SettingsScreen(null)
         }
         composable<Screen.Login>{
             Login_screen(
