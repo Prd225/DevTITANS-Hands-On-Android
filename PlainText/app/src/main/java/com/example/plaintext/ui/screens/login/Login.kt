@@ -55,6 +55,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.plaintext.R
 import com.example.plaintext.ui.viewmodel.PreferencesViewModel
+import com.example.plaintext.ui.viewmodel.LoginViewModel
+import com.example.plaintext.ui.viewmodel.LoginViewState
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.tooling.preview.Preview
 
 data class LoginState(
     val preencher: Boolean,
@@ -68,9 +73,152 @@ data class LoginState(
 fun Login_screen(
     navigateToSettings: () -> Unit,
     navigateToList: () -> Unit,
-    viewModel: PreferencesViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel()
+) {
+    val context = LocalContext.current
+
+    Login_screen_content(
+        state = viewModel.loginState,
+        onLoginChange = { viewModel.updateLoginText(it) },
+        onPasswordChange = { viewModel.updatePasswordText(it) },
+        onSaveLoginChange = { viewModel.updateSaveLoginInfo(it) },
+        onLoginClick = {
+            if (viewModel.checkCredentials()) {
+                navigateToList()
+            } else {
+                Toast.makeText(context, "Login/Senha invalidos", Toast.LENGTH_SHORT).show()
+            }
+        },
+        navigateToSettings = navigateToSettings
+    )
+}
+
+@Composable
+fun Login_screen_content(
+    state: LoginViewState,
+    onLoginChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onSaveLoginChange: (Boolean) -> Unit,
+    onLoginClick: () -> Unit,
+    navigateToSettings: () -> Unit
 ) {
 
+    Scaffold(
+        topBar = {
+            TopBarComponent(
+                navigateToSettings = navigateToSettings,
+                navigateToSensores = {}
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // 1. Banner Verde
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF9CCC65))
+                    .padding(vertical = 24.dp, horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    contentDescription = "Android Logo",
+                    tint = Color.White,
+                    modifier = Modifier.size(64.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "\"The most\nsecure password\nmanager\"",
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = "Bob and Alice",
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // 2. Texto de instrução
+            Text(text = "Digite suas credenciais para continuar")
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 3. Campo de Login
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 32.dp)
+            ) {
+                Text(text = "Login:", modifier = Modifier.width(60.dp))
+                OutlinedTextField(
+                    value = state.loginText,
+                    onValueChange = onLoginChange,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // 4. Campo de Senha
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 32.dp)
+            ) {
+                Text(text = "Senha:", modifier = Modifier.width(60.dp))
+                OutlinedTextField(
+                    value = state.passwordText,
+                    onValueChange = onPasswordChange,
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 5. Checkbox e Botão
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = state.saveLoginInfo,
+                    onCheckedChange = onSaveLoginChange
+                )
+                Text(text = "Salvar as informações de login")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = onLoginClick
+            ) {
+                Text(text = "Enviar")
+            }
+        }
+    }
+}
+@Preview
+@Composable
+fun LoginScreenPreview() {
+    MaterialTheme {
+        Login_screen_content(
+            state = LoginViewState(),
+            onLoginChange = {},
+            onPasswordChange = {},
+            onSaveLoginChange = {},
+            onLoginClick = {},
+            navigateToSettings = {}
+        )
+    }
 }
 
 @Composable

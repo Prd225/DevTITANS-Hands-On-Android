@@ -52,21 +52,27 @@ import com.example.plaintext.data.model.PasswordInfo
 
 @Composable
 fun ListView(
-    navigateToEditList: (password: PasswordInfo) -> Unit,
+    navigateToEdit: (password: PasswordInfo) -> Unit,
+    navigateToSettings: () -> Unit = {},
     viewModel: ListViewModel = hiltViewModel()
 ) {
     Scaffold(
-        topBar = { TopBarComponent() },
+        topBar = {
+            TopBarComponent(
+                navigateToSettings = navigateToSettings,
+                navigateToSensores = {}
+            )
+        },
         floatingActionButton = {
             AddButton(onClick = {
-                navigateToEditList(PasswordInfo(0, "", "", "", ""))
+                navigateToEdit(PasswordInfo(0, "", "", "", ""))
             })
         }
     ) { padding ->
         ListItemContent(
             modifier = Modifier.padding(padding),
             listState = viewModel.listViewState,
-            navigateToEdit = navigateToEditList,
+            navigateToEdit = navigateToEdit,
             onDelete = { password -> viewModel.deletePassword(password) }
         )
     }
@@ -171,30 +177,7 @@ fun ListItem(
 @Preview(showBackground = true, backgroundColor = 0xFFA52A2A, showSystemUi = true)
 @Composable
 fun ListViewPreview() {
-    val senhasFalsas = listOf(
-        PasswordInfo(
-            id = 1,
-            name = "Gmail",
-            login = "pedro@gmail.com",
-            password = "senha_super_secreta_1",
-            notes = "Email principal"
-        ),
-        PasswordInfo(
-            id = 2,
-            name = "Github",
-            login = "pedro.dev",
-            password = "senha_super_secreta_2",
-            notes = "Repositórios da faculdade"
-        )
-    )
-
-    val estadoFalso = ListViewState(
-        isCollected = true,
-        passwordList = senhasFalsas
-    )
     ListView(
-        listState = estadoFalso,
-        onAddClick = { },
         navigateToEdit = { }
     )
 }
