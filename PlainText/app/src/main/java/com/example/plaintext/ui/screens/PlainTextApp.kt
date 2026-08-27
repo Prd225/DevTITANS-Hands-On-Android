@@ -29,34 +29,31 @@ fun PlainTextApp(
 ) {
     NavHost(
         navController = appState.navController,
-        startDestination = Screen.Hello("DevTITANS"),
-
-        //startDestination = Screen.Preferences
-
-        //startDestination = Screen.List// <- ativar essa linha temporária enquanto as telas não estão
-        // implementadas, apenas para visualizar a tela de cadastro no banco, desativar a linha
-        // anterior quando ativar esta.
+        startDestination = Screen.Login
     )
     {
         composable<Screen.Hello>{
             var args = it.toRoute<Screen.Hello>()
             Hello_screen(args)
         }
-        composable<Screen.Preferences>{
-            SettingsScreen(null)
-        }
         composable<Screen.Login>{
             Login_screen(
-                navigateToSettings = {},
-                navigateToList = { appState.navigateToList()}
+                navigateToSettings = { appState.navController.navigate(Screen.Preferences) },
+                navigateToList = { appState.navController.navigate(Screen.List) }
             )
-        }
-        composable <Screen.List> {
-            ListView(
-                navigateToEditList = { password -> appState.navigateToEditList(password) }
-            )
-        }
 
+        }
+        composable<Screen.List> {
+            ListView(
+                navigateToEdit = { password ->
+                    appState.navController.navigate(Screen.EditList(password))
+                },
+                navigateToSettings = { appState.navController.navigate(Screen.Preferences) }
+            )
+        }
+        composable<Screen.Preferences> {
+            SettingsScreen(navController = appState.navController)
+        }
         composable<Screen.EditList>(
             typeMap = mapOf(typeOf<PasswordInfo>() to parcelableType<PasswordInfo>())
         ) {
@@ -65,7 +62,9 @@ fun PlainTextApp(
             EditList(
                 args,
                 navigateBack = { appState.navController.popBackStack() },
-                savePassword = { password, onResult -> viewModel.savePassword(password, onResult) }
+                savePassword = { password, onResult ->
+                    viewModel.savePassword(password, onResult)
+                }
             )
         }
     }
