@@ -1,8 +1,10 @@
 package com.example.plaintext.ui.screens.list
 
+import android.R.attr.onClick
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +44,7 @@ import androidx.compose.foundation.overscroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.room.Delete
@@ -49,21 +52,27 @@ import com.example.plaintext.data.model.PasswordInfo
 
 @Composable
 fun ListView(
-    navigateToEditList: (password: PasswordInfo) -> Unit,
+    navigateToEdit: (password: PasswordInfo) -> Unit,
+    navigateToSettings: () -> Unit = {},
     viewModel: ListViewModel = hiltViewModel()
 ) {
     Scaffold(
-        topBar = { TopBarComponent() },
+        topBar = {
+            TopBarComponent(
+                navigateToSettings = navigateToSettings,
+                navigateToSensores = {}
+            )
+        },
         floatingActionButton = {
             AddButton(onClick = {
-                navigateToEditList(PasswordInfo(0, "", "", "", ""))
+                navigateToEdit(PasswordInfo(0, "", "", "", ""))
             })
         }
     ) { padding ->
         ListItemContent(
             modifier = Modifier.padding(padding),
             listState = viewModel.listViewState,
-            navigateToEdit = navigateToEditList,
+            navigateToEdit = navigateToEdit,
             onDelete = { password -> viewModel.deletePassword(password) }
         )
     }
@@ -165,3 +174,10 @@ fun ListItem(
     }
 }
 
+@Preview(showBackground = true, backgroundColor = 0xFFA52A2A, showSystemUi = true)
+@Composable
+fun ListViewPreview() {
+    ListView(
+        navigateToEdit = { }
+    )
+}
