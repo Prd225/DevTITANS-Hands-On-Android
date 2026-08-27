@@ -19,35 +19,29 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class PreferencesState(
-    var login: String,
-    var password: String,
-    var preencher: Boolean
+data class PreferencesViewState(
+    var login: String = "",
+    var password: String = "",
+    var preencher: Boolean = true
 )
 
 @HiltViewModel
 class PreferencesViewModel @Inject constructor(
     handle: SavedStateHandle
 ) : ViewModel() {
-    var preferencesState by mutableStateOf(PreferencesState(login = "devtitans", password = "123", preencher = true))
+    var preferencesState by mutableStateOf(PreferencesViewState(login = "devtitans", password = "123", preencher = true))
         private set
 
-    fun updateLogin(login: String) {
-        preferencesState = preferencesState.copy(
-            login = login
-        )
+    fun updateLogin(newLogin: String) {
+        preferencesState = preferencesState.copy(login = newLogin)
     }
 
-    fun updatePassword(password: String) {
-        preferencesState = preferencesState.copy(
-            password = password
-        )
+    fun updatePassword(newPassword: String) {
+        preferencesState = preferencesState.copy(password = newPassword)
     }
 
-    fun updatePreencher(preencher: Boolean) {
-        preferencesState = preferencesState.copy(
-            preencher = !preencher
-        )
+    fun updatePreencher(newPreencherStatus: Boolean) {
+        preferencesState = preferencesState.copy(preencher = newPreencherStatus)
     }
 
     fun checkCredentials(login: String, password: String): Boolean{
